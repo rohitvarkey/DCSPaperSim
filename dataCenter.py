@@ -15,12 +15,12 @@ class Shard:
     """Represents each shard"""
     def __init__(self,id,nodes={}):
         self.id = id #Unique id
-        self.nodes = nodes #Dictionary containing nodes stored in the shard
+        self.nodes = nodes #Dictionary containing nodes stored in the shard (id:Node)
         self.cache = {} #Cache dictionary
 
 class DataCenter:
     """Represents a dataCenter. Each datacenter contains a shard."""
-    def __init__(self,id,nodes,port,cost):
+    def __init__(self,id,nodes={},port=10000,cost=100):
         self.id = id
         self.shard = Shard(id,nodes)
         self.port = port
@@ -41,3 +41,7 @@ class DataCenter:
     def getNodeList(self):
         """Return list of node ID's"""
         return self.shard.nodes.keys()
+
+    def addNodes(self,nodesToBeAdded):
+        for nodeId in nodesToBeAdded:
+            self.shard.nodes[nodeId] = nodesToBeAdded[nodeId]

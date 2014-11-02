@@ -5,7 +5,7 @@ class NameServer:
         self.DataCenterHasShards = {}
         self.network = network
         for dataCenter in network.dataCenters:
-            self.DataCenterHasShards[dataCenter.id] = dataCenter.getNodeList()
+            self.DataCenterHasShards[dataCenter] = network.dataCenters[dataCenter].getNodeList()
 
     def addDataCenter(self,dataCenter):
         self.DataCenterHasShards[dataCenter.id] = dataCenter.getNodeList()
