@@ -19,7 +19,7 @@ class Network:
         #Create associations. Create nodes.
         for userId in self.users:
             A={}
-            noOfAssociations = random.randint(0,noOfUsers)
+            noOfAssociations = random.randint(0,noOfUsers/16)
             #Setting up associations with random no of nodes.
             for i in xrange(0,noOfAssociations):
                 #Choosing nodes and assigning weight randomly.
@@ -36,22 +36,22 @@ class Network:
         self.nameServer = NameServer(self) #Creating a nameserver to handle shard and node based datacenter requests.
         print "Network set up."
         for dataCenter in self.dataCenters:
-            print dataCenter,':',self.dataCenters[dataCenter].getNodeList() 
+            print dataCenter,':',self.dataCenters[dataCenter].getNodeList()
 
     def findSCCAndAssign(self):
         graph = {}
         for nodeId in self.nodes:
-            graph[nodeId] = filter(lambda x:x>=self.wThreshold,self.nodes[nodeId].A.keys())
-        print "graph",graph
+            print len(self.nodes[nodeId].A.keys())
+            print len(filter(lambda x:self.nodes[nodeId].A[x]>=self.wThreshold,self.nodes[nodeId].A.keys()))
+            graph[nodeId] = filter(lambda x:self.nodes[nodeId].A[x]>=self.wThreshold,self.nodes[nodeId].A.keys())
         SCCList = tarjan.tarjan(graph)
         for SCC in SCCList:
-            print "SCC:", SCC
             dataCenterId = random.choice(self.dataCenters.keys())
-            print "Assigned to ", dataCenterId
+            print "SSC length of ", len(SCC),"Assigned to ", dataCenterId
             dataCenter = self.dataCenters[dataCenterId]
             nodesToAdd = {}
             for nodeID in SCC:
                 nodesToAdd[nodeID] = self.nodes[nodeID]
             dataCenter.addNodes(nodesToAdd)
 
-network = Network(10,2,3,0.5)
+network = Network(2000,10,15,0.5)
