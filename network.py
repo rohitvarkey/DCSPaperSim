@@ -28,11 +28,15 @@ class Network:
                 A[associatedNode] = weight
             self.nodes[userId] = Node(userId,4,A)
         for i in xrange (0,noOfDataCenters):
-            self.dataCenters[i] = DataCenter(id)
+            self.dataCenters[i] = DataCenter(i,{})
+        for dataCenter in self.dataCenters:
+            print dataCenter,':',self.dataCenters[dataCenter].getNodeList() 
         #Finding strongly connected components and assigning all nodes that are part of it to a random datacenter
         self.findSCCAndAssign()
         self.nameServer = NameServer(self) #Creating a nameserver to handle shard and node based datacenter requests.
         print "Network set up."
+        for dataCenter in self.dataCenters:
+            print dataCenter,':',self.dataCenters[dataCenter].getNodeList() 
 
     def findSCCAndAssign(self):
         graph = {}
@@ -43,6 +47,7 @@ class Network:
         for SCC in SCCList:
             print "SCC:", SCC
             dataCenterId = random.choice(self.dataCenters.keys())
+            print "Assigned to ", dataCenterId
             dataCenter = self.dataCenters[dataCenterId]
             nodesToAdd = {}
             for nodeID in SCC:
