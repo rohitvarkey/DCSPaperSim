@@ -1,5 +1,6 @@
+import random
 from dataCenter import DataCenter,Shard
-from network import User
+#from user import User
 
 class Query:
     def __init__(self,userNodeId,network):
@@ -10,17 +11,21 @@ class Query:
         nameServer = self.network.nameServer
         dataCenter = nameServer.getDataCenter(self.userNodeId)
         cost = 0
+        dataCenterInst = self.network.dataCenters[dataCenter]
         res = {}
-        queryNodesList = dataCenter.shard.nodes[userNodeId]
-        cost+=dataCenter.cost
+        queryNodesList = dataCenterInst.shard.nodes[self.userNodeId].A.keys()
+        cost+=dataCenterInst.cost
         for nodeId in queryNodesList:
-            if dataCenter.isAvailable(nodeId):
-                cost+=dataCenter.cost
-                reqNode = dataCenter.shard.nodes[nodeId]
+            if dataCenterInst.isAvailable(nodeId):
+                cost+=dataCenterInst.cost
+                reqNode = dataCenterInst.shard.nodes[nodeId]
                 res[nodeId] = reqNode
             else:
-                nodeDataCenter = nameServer.getDataCenter(self.nodeId)
-                cost+=5*nodeDataCenter.cost #Assumption
-                reqNode = nodeDataCenter.shard.nodes[nodeId]
+                nodeDataCenter = nameServer.getDataCenter(nodeId)
+                nodeDataCenterInst = self.network.dataCenters[nodeDataCenter]
+                cost+=random.randint(10,100)*nodeDataCenterInst.cost #Assumption
+                reqNode = nodeDataCenterInst.shard.nodes[nodeId]
                 res[nodeId] = reqNode
-        return res
+                nodeDataCenterInst.addToCache({nodeId:reqNode})
+        print "Query by", self.userNodeId, "Cost = ", cost
+        return (cost,res)
